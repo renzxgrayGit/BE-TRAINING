@@ -1,0 +1,59 @@
+/* Create a stored procedure that retrieves customer information based on a given customer ID */
+CREATE PROCEDURE SelectCustomer @CustomerID nvarchar(50)
+AS
+SELECT * FROM dbo.users WHERE Id = @CustomerID
+GO
+
+How to call it:
+EXEC dbo.SelectCustomer @customerID = ‘1’;
+
+
+SQL Server Scalar Functions
+How to: Use Scalar-Valued User-Defined Functions - ADO.NET | Microsoft Learn
+
+CREATE FUNCTION [schema_name.]function_name (parameter_list)
+RETURNS data_type AS
+BEGIN
+    statements
+    RETURN value
+END
+
+CREATE FUNCTION sales.udfNetSale(
+    @quantity INT,
+    @list_price DEC(10,2),
+    @discount DEC(4,2)
+)
+RETURNS DEC(10,2)
+AS 
+BEGIN
+    RETURN @quantity * @list_price * (1 - @discount);
+END;
+
+SELECT 
+    sales.udfNetSale(10,100,0.1) net_sale;
+
+
+
+/*Create a user-defined function that calculates the total order amount for a given customer.*/
+CREATE FUNCTION CalculateTotalOrderAmount (@CustomerId INT)
+RETURNS DECIMAL(10, 2)
+AS
+BEGIN
+    DECLARE @TotalAmount DECIMAL(10, 2);
+    
+    SELECT @TotalAmount = SUM(Amount)
+    FROM Orders
+    WHERE CustomerId = @CustomerId;
+
+    RETURN ISNULL(@TotalAmount, 0);
+END;
+
+How to call it:
+SELECT dbo.CalculateTotalOrderAmount(1)
+
+or
+
+DECLARE @TotalOrderAmount DECIMAL(10, 2);
+SET @TotalOrderAmount = dbo.CalculateTotalOrderAmount(123); -- Replace 123 with CustomerId
+SELECT @TotalOrderAmount AS TotalOrderAmount;
+
